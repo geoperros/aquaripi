@@ -40,8 +40,8 @@ if len(sys.argv) == 3 and sys.argv[1] in sensor_args:
     sensor = sensor_args[sys.argv[1]]
     pin = sys.argv[2]
 else:
-    print('Usage: sudo ./Adafruit_DHT.py [11|22|2302] <GPIO pin number>')
-    print('Example: sudo ./Adafruit_DHT.py 2302 4 - Read from an AM2302 connected to GPIO pin #4')
+    print('Usage: sudo ./GetTemp_test2.py [11|22|2302] <GPIO pin number>')
+    print('Example: sudo ./GetTemp_test2.py 2302 4 - Read from an AM2302 connected to GPIO pin #4')
     sys.exit(1)
 
 # Try to grab a sensor reading.  Use the read_retry method which will retry up
@@ -55,18 +55,20 @@ humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 # the results will be null (because Linux can't
 # guarantee the timing of calls to read the sensor).
 # If this happens try again!
-while temperature > -273:
+while True:
     if humidity is not None and temperature is not None:
         seconds = time.time()
         local_time = time.ctime(seconds)
         #print('Temp = {0:0.1f}*  Humidity = {1:0.1f}%'.format(temperature, humidity))
         temp = get_temp("/sys/bus/w1/devices/28-3c01a816dc0b/w1_slave")
+        # temp = temp * 9/5.0 + 32
         #print('Water Temperature = {}'.format(temp))
         with open("test.txt", 'a') as file_object:
             file_object.write(f"Local Time :{local_time}\n")
             file_object.write(f"Temp :{temperature} Humidity :{humidity} Water Temperature :{temp}\n")
         time.sleep(300)
         humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+        # temperature = temperature * 9/5.0 + 32
     
     else:
         print('Failed to get reading. Try again!')

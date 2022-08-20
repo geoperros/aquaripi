@@ -18,7 +18,7 @@ def get_temp(dev_file):
         temperature = contents[-1][index+2:]
         cels =float(temperature)/1000
         return cels
-
+# Initial test of the relay to inform the user that the relay is working as intended.
 if __name__ == '__main__':
     try:
         motor_on(channel)
@@ -33,6 +33,7 @@ temp = get_temp("/sys/bus/w1/devices/28-3c01a816dc0b/w1_slave")
 while temp>10:
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(channel, GPIO.OUT)
+    # By setting this if statement we control the lowest temperature that the fan will work.
     if temp > 23.5:
         motor_on(channel)
         time.sleep(60)
